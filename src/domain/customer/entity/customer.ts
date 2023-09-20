@@ -1,3 +1,6 @@
+import EventDispatcherInterface from "../../@shared/event/event-dispatcher.interface";
+import { EventDispatcherFactory } from "../../@shared/factory/event-dispatcher.factory";
+import CustomerUpdatedEvent from "../event/customer-updated.event";
 import Address from "../value-object/address";
 
 export default class Customer {
@@ -43,8 +46,16 @@ export default class Customer {
     return this._address;
   }
   
-  changeAddress(address: Address) {
+  changeAddress(
+    address: Address,
+    eventDispatcher: EventDispatcherInterface = EventDispatcherFactory.create()
+  ) {
     this._address = address;
+    eventDispatcher.notify(new CustomerUpdatedEvent({
+      id: this._id,
+      name: this._name,
+      address: this._address
+    }));
   }
 
   isActive(): boolean {

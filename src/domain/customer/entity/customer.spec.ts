@@ -1,7 +1,19 @@
+import EventDispatcherInterface from "../../@shared/event/event-dispatcher.interface";
 import Address from "../value-object/address";
 import Customer from "./customer";
 
 describe("Customer unit tests", () => {
+  let eventDispatcher: EventDispatcherInterface;
+
+  beforeEach(() => {
+    eventDispatcher = {
+      notify: jest.fn(),
+      register: jest.fn(),
+      unregister: jest.fn(),
+      unregisterAll: jest.fn(),
+    };
+  });
+
   it("should throw error when id is empty", () => {
     expect(() => {
       let customer = new Customer("", "John");
@@ -59,5 +71,15 @@ describe("Customer unit tests", () => {
 
     customer.addRewardPoints(10);
     expect(customer.rewardPoints).toBe(20);
+  });
+
+  it('should call event dispatcher when change address', () => {
+    const customer = new Customer("1", "Customer 1");
+    const address = new Address("Street 1", 123, "13330-250", "São Paulo");
+    customer.Address = address;
+
+    customer.changeAddress(address, eventDispatcher);
+
+    expect(eventDispatcher.notify).toHaveBeenCalled();
   });
 });

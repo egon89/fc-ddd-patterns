@@ -3,9 +3,11 @@ import Customer from "../../../../domain/customer/entity/customer";
 import Address from "../../../../domain/customer/value-object/address";
 import CustomerModel from "./customer.model";
 import CustomerRepository from "./customer.repository";
+import EventDispatcherInterface from "../../../../domain/@shared/event/event-dispatcher.interface";
 
 describe("Customer repository test", () => {
   let sequelize: Sequelize;
+  let eventDispatcher: EventDispatcherInterface;
 
   beforeEach(async () => {
     sequelize = new Sequelize({
@@ -14,6 +16,13 @@ describe("Customer repository test", () => {
       logging: false,
       sync: { force: true },
     });
+
+    eventDispatcher = {
+      notify: jest.fn(),
+      register: jest.fn(),
+      unregister: jest.fn(),
+      unregisterAll: jest.fn(),
+    };
 
     await sequelize.addModels([CustomerModel]);
     await sequelize.sync();
@@ -28,7 +37,7 @@ describe("Customer repository test", () => {
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.Address = address;
-    await customerRepository.create(customer);
+    await customerRepository.create(customer, eventDispatcher);
 
     const customerModel = await CustomerModel.findOne({ where: { id: "123" } });
 
@@ -42,6 +51,7 @@ describe("Customer repository test", () => {
       zipcode: address.zip,
       city: address.city,
     });
+    expect(eventDispatcher.notify).toHaveBeenCalled();
   });
 
   it("should update a customer", async () => {
