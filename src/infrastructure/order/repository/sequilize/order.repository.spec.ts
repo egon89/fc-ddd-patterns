@@ -151,12 +151,17 @@ describe("Order repository test", () => {
     expect(foundOrders).toStrictEqual([order, order2]);
   });
 
-  it.skip('should update an order', async () => {
+  it('should update an order', async () => {
     const customerRepository = new CustomerRepository();
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.changeAddress(address);
     await customerRepository.create(customer);
+
+    const customer2 = new Customer("1234", "Customer 2");
+    const address2 = new Address("Street 2", 2, "Zipcode 2", "City 2");
+    customer2.changeAddress(address2);
+    await customerRepository.create(customer2);
 
     const productRepository = new ProductRepository();
     const product = new Product("123", "Product 1", 10);
@@ -175,9 +180,14 @@ describe("Order repository test", () => {
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
 
-    const orderModel = orderRepository.find(order.id);
-    expect(orderModel).toStrictEqual({});
+    const foundOrder = await orderRepository.find(order.id);
 
+    expect(foundOrder).toStrictEqual(order);
+
+    foundOrder.changeCustomerId("1234");
+    await orderRepository.update(foundOrder);
+    const updatedOrder = await orderRepository.find(foundOrder.id);
     
+    expect(updatedOrder.customerId).toBe("1234");
   });
 });
