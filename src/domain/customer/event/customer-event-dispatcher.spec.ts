@@ -1,10 +1,10 @@
+import EventDispatcher from "../../@shared/event/event-dispatcher";
 import CustomerCreatedEvent from "../../customer/event/customer-created.event";
 import CustomerUpdatedEvent from "../../customer/event/customer-updated.event";
 import SentConsoleLog1Handler from "../../customer/event/handler/sent-console-log-1.handler";
 import SentConsoleLog2Handler from "../../customer/event/handler/sent-console-log-2.handler";
 import SentConsoleLog3Handler from "../../customer/event/handler/sent-console-log-3.handler";
 import Address from "../../customer/value-object/address";
-import EventDispatcher from "./event-dispatcher";
 import { v4 as uuid } from "uuid";
 
 
