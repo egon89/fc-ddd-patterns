@@ -51,4 +51,23 @@ export default class Order {
     this._customerId = customerId;
     this.validate();
   }
+
+  changeItemQuantityById(id: string, quantity: number): void {
+    const item = this._items.find((item) => item.id === id);
+    if (!item) {
+      throw new Error("Item not found");
+    }
+    item.changeQuantity(quantity);
+    this.validate();
+  }
+
+  addItems(items: OrderItem[]) {
+    this._items = [...this._items, ...items];
+    this.validate();
+  }
+
+  removeItemsById(ids: string[]) {
+    this._items = this._items.filter((item) => !ids.includes(item.id));
+    this.validate();
+  }
 }

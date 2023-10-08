@@ -41,6 +41,14 @@ export default class OrderItem {
     return this._price;
   }
 
+  changeQuantity(quantity: number) {
+    if (quantity <= 0) {
+      throw new Error("Quantity must be greater than 0");
+    }
+    this._quantity = quantity;
+    this._total = this.total();
+  }
+
   total(): number {
     return this._price * this._quantity
   }
